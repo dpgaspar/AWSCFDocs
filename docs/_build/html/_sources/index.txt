@@ -41,7 +41,7 @@ Every requirements have been met, so:
 
 6) Service logs are rotated and pushed to CloudWatch.
 
-- Yes.
+- Yes, rotation of miniclip log is done with linux logrotate config. Logs are sent to Cloudwatch using awslogs service.
 
 7) Secure the access. Only way to access the "service" from outside is via ELB.
 
@@ -52,11 +52,11 @@ Every requirements have been met, so:
 8) Autoscaling group (ASG) should launch new instance if inbound network traffic exceeds a X
    amount of bandwidth.
 
-- Yes, used NetworkIn builtin metric, and exposed two thresholds parameteres for ASG upscale and downscale.
+- Yes, used NetworkIn builtin CW metric, and exposed two thresholds parameters for ASG upscale and downscale.
 
 9) A instance should be replaced in ASG if a service binary fails to serve or crashes.
 
-- Yes, uses ELB Alarm for OutofService to span one more instance.
+- Yes, uses ELB Alarm for UnHealthyHostCount to span one more instance.
 
 Extra Features
 --------------
@@ -71,13 +71,15 @@ a) The instance reboots, and the service starts without problems.
 b) Start and Stop the service in a compliance and easy way.
 c) Easy to monitor the service *service miniclip status*.
 
-2 - An extra service and daemon script was devoloped to monitor the Miniclip service binary. This is also installed
+2 - Extra user is created named **miniclip**, service binaries are installed on the users homedir and run on it's name.
+
+3 - An extra service and daemon script was devoloped to monitor the Miniclip service binary. This is also installed
 on SysVInit. This is called *miniclip_monitor* and writes to a log file the state of the miniclip service binary.
 This log file is sent to CloudWatch to a specific stream.
 
-3 - The messages system log is sent to CloudWatch also. This seemed like an easy and usefull feature to include.
+4 - The messages system log is sent to CloudWatch also. This seemed like an easy and useful feature to include.
 
-4 - The stack supports rolling updates of stack changes or even for new code deploy. This made with two extra
+5 - The stack supports rolling updates of stack changes or even for new code deploy. This made with two extra
 parameters:
 
 a) DEPLOY_VERSION - The deploiment version
@@ -100,12 +102,14 @@ number 9.
 
 b) Used IAM Roles to access CloudWatch and S3 on stack init.
 
+c) Service binary runs with a non privileged user **miniclip**.
+
 2 - **Simple dev best practices**:
 
 a) The bash scripts do not have any hardcoded values on the code, this values are all set
 as global vars at the top of the script.
 
-b) The script are commented.
+b) The scripts are commented.
 
 c) The JSON template follows the same principle.
 
@@ -195,10 +199,7 @@ Final Notes and Critics
 
 There are some self critics i would like to point out:
 
-1 - service binary should not run as *root*. One aditional user should be created like **miniclip** and the daemon
-should start with it. This is a security problem.
-
-2 - I'm not happy with the solution for requirement 9, using ELB UnHealthyHostCount metric is ok to span another
+1 - I'm not happy with the solution for requirement 9, using ELB UnHealthyHostCount metric is ok to span another
 instance, but does not terminate the faulty instance by itself, this is done by the NetworkInAlarmLow.
 This could be done with two possible approaches:
 

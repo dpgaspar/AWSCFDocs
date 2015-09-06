@@ -167,7 +167,7 @@ I have used an install script inside a zip file on S3, were everything that can&
 <li>Service logs are rotated and pushed to CloudWatch.</li>
 </ol>
 <ul class="simple">
-<li>Yes.</li>
+<li>Yes, rotation of miniclip log is done with linux logrotate config. Logs are sent to Cloudwatch using awslogs service.</li>
 </ul>
 <ol class="arabic simple" start="7">
 <li>Secure the access. Only way to access the &#8220;service&#8221; from outside is via ELB.</li>
@@ -182,13 +182,13 @@ access.</li>
 amount of bandwidth.</li>
 </ol>
 <ul class="simple">
-<li>Yes, used NetworkIn builtin metric, and exposed two thresholds parameteres for ASG upscale and downscale.</li>
+<li>Yes, used NetworkIn builtin CW metric, and exposed two thresholds parameters for ASG upscale and downscale.</li>
 </ul>
 <ol class="arabic simple" start="9">
 <li>A instance should be replaced in ASG if a service binary fails to serve or crashes.</li>
 </ol>
 <ul class="simple">
-<li>Yes, uses ELB Alarm for OutofService to span one more instance.</li>
+<li>Yes, uses ELB Alarm for UnHealthyHostCount to span one more instance.</li>
 </ul>
 </div>
 <div class="section" id="extra-features">
@@ -202,11 +202,12 @@ as several benefits like:</p>
 <li>Start and Stop the service in a compliance and easy way.</li>
 <li>Easy to monitor the service <em>service miniclip status</em>.</li>
 </ol>
-<p>2 - An extra service and daemon script was devoloped to monitor the Miniclip service binary. This is also installed
+<p>2 - Extra user is created named <strong>miniclip</strong>, service binaries are installed on the users homedir and run on it&#8217;s name.</p>
+<p>3 - An extra service and daemon script was devoloped to monitor the Miniclip service binary. This is also installed
 on SysVInit. This is called <em>miniclip_monitor</em> and writes to a log file the state of the miniclip service binary.
 This log file is sent to CloudWatch to a specific stream.</p>
-<p>3 - The messages system log is sent to CloudWatch also. This seemed like an easy and usefull feature to include.</p>
-<p>4 - The stack supports rolling updates of stack changes or even for new code deploy. This made with two extra
+<p>4 - The messages system log is sent to CloudWatch also. This seemed like an easy and useful feature to include.</p>
+<p>5 - The stack supports rolling updates of stack changes or even for new code deploy. This made with two extra
 parameters:</p>
 <ol class="loweralpha simple">
 <li>DEPLOY_VERSION - The deploiment version</li>
@@ -225,12 +226,13 @@ instances. The would have been easier to include an cloudFormation admin key on 
 number 9.</p>
 <ol class="loweralpha simple" start="2">
 <li>Used IAM Roles to access CloudWatch and S3 on stack init.</li>
+<li>Service binary runs with a non privileged user <strong>miniclip</strong>.</li>
 </ol>
 <p>2 - <strong>Simple dev best practices</strong>:</p>
 <p>a) The bash scripts do not have any hardcoded values on the code, this values are all set
 as global vars at the top of the script.</p>
 <ol class="loweralpha simple" start="2">
-<li>The script are commented.</li>
+<li>The scripts are commented.</li>
 <li>The JSON template follows the same principle.</li>
 </ol>
 <p>d) The use of scripts inside UserData was set to a minimum, i personally think this is <em>cleaner</em> and better to
@@ -293,9 +295,7 @@ email me.</p>
 <div class="section" id="final-notes-and-critics">
 <h2>Final Notes and Critics<a class="headerlink" href="#final-notes-and-critics" title="Permalink to this headline">¶</a></h2>
 <p>There are some self critics i would like to point out:</p>
-<p>1 - service binary should not run as <em>root</em>. One aditional user should be created like <strong>miniclip</strong> and the daemon
-should start with it. This is a security problem.</p>
-<p>2 - I&#8217;m not happy with the solution for requirement 9, using ELB UnHealthyHostCount metric is ok to span another
+<p>1 - I&#8217;m not happy with the solution for requirement 9, using ELB UnHealthyHostCount metric is ok to span another
 instance, but does not terminate the faulty instance by itself, this is done by the NetworkInAlarmLow.
 This could be done with two possible approaches:</p>
 <p>a) Using the service miniclip_monitor on the instance, to shutdown, or recover the instance. (shutdown is trivial,
