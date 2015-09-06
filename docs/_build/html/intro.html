@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 
 
@@ -6,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Index &mdash; AWS CloudFormation Chalenge</title>
+    <title>Introduction &mdash; AWS CloudFormation Chalenge</title>
     
     <link rel="stylesheet" href="_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -75,7 +74,13 @@
      href="#">Page <b class="caret"></b></a>
   <ul class="dropdown-menu localtoc"
       role="menu"
-      aria-labelledby="dLabelLocalToc"></ul>
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Introduction</a><ul>
+<li><a class="reference internal" href="#includes">Includes:</a></li>
+</ul>
+</li>
+</ul>
+</ul>
 </li>
               
             
@@ -107,11 +112,96 @@
   <div class="row">
     <div class="col-md-12">
       
-
-<h1 id="index">Index</h1>
-
-<div class="genindex-jumpbox">
- 
+  <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>The main goal for this project is to provide a simple development framework
+that handles the main problems any web application or site encounters.
+It will help you adhere to the DRY (Don&#8217;t repeat yourself) principle.</p>
+<p>Keep in mind that it it possible to develop directly on Flask/Jinja2 for custom pages or flows,
+that painlessly integrate with the framework.</p>
+<p>This framework goes further than an admin scaffolding package.
+It has builtin presentation and behaviour alternatives, and you can easily build your own.
+It&#8217;s highly configurable, and ships with extra goodies.</p>
+<p>It&#8217;s intended to lower errors, bugs and project&#8217;s time to deliver.</p>
+<p>This package has some CSS and JS batteries included:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Google charts CSS and JS</li>
+<li>BootStrap CSS and JS</li>
+<li>BootsWatch Themes</li>
+<li>Font-Awesome CSS and Fonts</li>
+</ul>
+</div></blockquote>
+<div class="section" id="includes">
+<h2>Includes:<a class="headerlink" href="#includes" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul>
+<li><dl class="first docutils">
+<dt>Database</dt>
+<dd><ul class="first last simple">
+<li>SQLAlchemy, multiple database support: sqlite, MySQL, ORACLE, MSSQL, DB2 etc.</li>
+<li>MongoDB, using mongoEngine, still partial support (only normalized).</li>
+<li>Multiple database connections support (Vertical partitioning).</li>
+<li>Easy mixin audit to models (created/changed by user, and timestamps).</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Security</dt>
+<dd><ul class="first last simple">
+<li>Automatic permissions lookup, based on exposed methods. It will grant all permissions to the Admin Role.</li>
+<li>Inserts on the Database all the detailed permissions possible on your application.</li>
+<li>Public (no authentication needed) and Private permissions.</li>
+<li>Role based permissions.</li>
+<li>Authentication support for OAuth, OpenID, Database, LDAP and REMOTE_USER environ var.</li>
+<li>Support for self user registration.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Views and Widgets</dt>
+<dd><ul class="first last simple">
+<li>Automatic menu generation.</li>
+<li>Automatic CRUD generation.</li>
+<li>Multiple actions on db records.</li>
+<li>Big variety of filters for your lists.</li>
+<li>Various view widgets: lists, master-detail, list of thumbnails etc</li>
+<li>Select2, Datepicker, DateTimePicker</li>
+<li>Google charts with automatic group by or direct values and filters.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Forms</dt>
+<dd><ul class="first last simple">
+<li>Automatic, Add, Edit and Show from Database Models</li>
+<li>Labels and descriptions for each field.</li>
+<li>Automatic base validators from model&#8217;s definition.</li>
+<li>Custom validators, extra fields, custom filters for related dropdown lists.</li>
+<li>Image and File support for upload and database field association. It will handle everything for you.</li>
+<li>Field sets for Form&#8217;s (Django style).</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>i18n</dt>
+<dd><ul class="first last simple">
+<li>Support for multi-language via Babel</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">Bootstrap 3.3.1 CSS and js, with Select2 and DatePicker</p>
+</li>
+<li><p class="first">Font-Awesome icons, for menu icons and actions.</p>
+</li>
+</ul>
+</div></blockquote>
+</div>
 </div>
 
 
