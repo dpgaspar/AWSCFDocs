@@ -82,6 +82,7 @@
 <li><a class="reference internal" href="#instalation">Instalation</a></li>
 <li><a class="reference internal" href="#package-description">Package description</a></li>
 <li><a class="reference internal" href="#final-notes-and-critics">Final Notes and Critics</a></li>
+<li><a class="reference internal" href="#conclusion">Conclusion</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
@@ -120,7 +121,7 @@
       
   <div class="section" id="aws-cloudformation-challenge-for-miniclip">
 <h1>AWS CloudFormation Challenge for MiniClip<a class="headerlink" href="#aws-cloudformation-challenge-for-miniclip" title="Permalink to this headline">¶</a></h1>
-<p>Hello, i thought it would be a nice idea to use the excelent readthedocs and
+<p>Hello, i thought it would be a nice idea to use the excelent
 <a class="reference external" href="http://sphinx-doc.org/">sphinx</a> to write a small README
 to go along with the challenge.</p>
 <p>I hope this way, you&#8217;ll have some fun reading it, and at the same time have no problems testing the solution
@@ -207,45 +208,42 @@ as several benefits like:</p>
 on SysVInit. This is called <em>miniclip_monitor</em> and writes to a log file the state of the miniclip service binary.
 This log file is sent to CloudWatch to a specific stream.</p>
 <p>4 - The messages system log is sent to CloudWatch also. This seemed like an easy and useful feature to include.</p>
-<p>5 - The stack supports rolling updates of stack changes or even for new code deploy. This made with two extra
+<p>5 - The stack supports rolling updates of stack changes, or even for new code deploy. This is done with two extra
 parameters:</p>
 <ol class="loweralpha simple">
 <li>DEPLOY_VERSION - The deploiment version</li>
 <li>DEPLOY_CONTEXT - The context: Production, Staging, Development.</li>
 </ol>
-<p>The parameters values are set on a created file name env.sh (on ec2-user home),
+<p>The parameter values are set on a created file name env.sh (on miniclip home),
 this changes the stack UserData, and forces the instances to perform a rolling update and download
-the service from S3 again. These could be used by the application to perform extra config.</p>
+the service from S3 again. These could be used by the application to perform extra config. The rolling updates
+are possible if you have at least two instance on the ASG.</p>
 </div>
 <div class="section" id="special-concerns">
 <h2>Special Concerns<a class="headerlink" href="#special-concerns" title="Permalink to this headline">¶</a></h2>
 <p>It was taken into concern the following aspects:</p>
 <p>1 - <strong>Security</strong>:</p>
-<p>a) No passwords, RSA keys or tokens are hardcoded on the stack or even created to be included on the
-instances. The would have been easier to include an cloudFormation admin key on the instance to fullfill requirement
-number 9.</p>
-<ol class="loweralpha simple" start="2">
+<ol class="loweralpha simple">
+<li>No passwords, RSA keys or tokens are hardcoded on the stack or even created to be included on the instances.</li>
 <li>Used IAM Roles to access CloudWatch and S3 on stack init.</li>
 <li>Service binary runs with a non privileged user <strong>miniclip</strong>.</li>
 </ol>
 <p>2 - <strong>Simple dev best practices</strong>:</p>
-<p>a) The bash scripts do not have any hardcoded values on the code, this values are all set
-as global vars at the top of the script.</p>
-<ol class="loweralpha simple" start="2">
+<ol class="loweralpha simple">
+<li>The bash scripts do not have any hardcoded values on the code, this values are all set as global vars at the top of the script.</li>
 <li>The scripts are commented.</li>
 <li>The JSON template follows the same principle.</li>
+<li>The use of scripts inside UserData was set to a minimum, i personally think this is <em>cleaner</em> and better to support future changes.</li>
 </ol>
-<p>d) The use of scripts inside UserData was set to a minimum, i personally think this is <em>cleaner</em> and better to
-support future changes.</p>
 <p>3 - <strong>Organization, compliance, best practices and infrastructure management</strong>.</p>
 </div>
 <div class="section" id="instalation">
 <h2>Instalation<a class="headerlink" href="#instalation" title="Permalink to this headline">¶</a></h2>
+<p>You can download the solution files here:</p>
+<p><a class="reference download internal" href="_downloads/miniclip.json"><code class="xref download docutils literal"><span class="pre">miniclip.json</span></code></a>
+<a class="reference download internal" href="_downloads/miniclip.zip"><code class="xref download docutils literal"><span class="pre">miniclip.zip</span></code></a></p>
 <p>1 - <strong>Upload miniclip.zip</strong>:</p>
-<p>To test the stack creation you must first upload the supplied miniclip.zip to an S3 Bucket. Do it on Frankfurt region,
-you can use different regions as long as the URL for it complies with s3.&lt;REGION&gt;.amazonaws.com/&lt;BUCKET&gt;/&lt;FILE&gt;.
-US regions do not comply with it (this could be overcomed using mapping on the template).</p>
-<p><strong>The region for S3 must be the same as the region for the stack</strong>.</p>
+<p>To test the stack creation you must first upload the supplied miniclip.zip to an S3 Bucket.</p>
 <p><strong>Take note of the bucket name and file. It will be used further for the stack parameters</strong>.</p>
 <p>So, the propused default S3 upload would be miniclip-deploy/miniclip.zip that would produce the following URL:
 <a class="reference external" href="https://s3.eu-central-1.amazonaws.com/miniclip-deploy/miniclip.zip">https://s3.eu-central-1.amazonaws.com/miniclip-deploy/miniclip.zip</a></p>
@@ -287,10 +285,36 @@ email me.</p>
 <ul class="simple">
 <li><strong>miniclip_service.sh</strong> : This is the binary service suplied by Miniclip.</li>
 <li><strong>miniclip</strong> : The init.d script that starts, stops, and checks the status of the binary service.</li>
-<li><strong>miniclip_monitor.sh</strong> : This script monitors miniclip service, writes it&#8217;s state on /opt/miniclip/miniclip_monitor.log</li>
+<li><strong>miniclip_monitor.sh</strong> : This script monitors miniclip service, writes it&#8217;s state on /home/miniclip/miniclip_monitor.log</li>
 <li><strong>miniclip_monitor</strong> : The init.d script that starts, stops, and checks the status of the monitoring service.</li>
 <li><strong>install.sh</strong> : This script installs all previous scripts.</li>
 </ul>
+<p>miniclip.json (The stack) creates the following resources:</p>
+<ul class="simple">
+<li><strong>Security</strong></li>
+</ul>
+<p>InstanceRole - IAM:Role.</p>
+<p>S3DownloadAndCloudWatch - IAM:Policy.</p>
+<p>InstanceProfile - IAM:InstanceProfile with the InstanceRole.</p>
+<p>InstanceSecurityGroup - EC2::SecurityGroup, contains the firewall rules for the instances.</p>
+<p>ElasticLoadBalancerSecurityGroup - EC2::SecurityGroup, contains the firewall rules for the instances.</p>
+<ul class="simple">
+<li><strong>Instance/Other</strong></li>
+</ul>
+<p>ElasticLoadBalancer - ElasticLoadBalancing::LoadBalancer - The LB.</p>
+<p>WebServerGroup - AutoScaling::AutoScalingGroup. Contains the configuration for the ASG.</p>
+<p>LaunchConfig - AutoScaling::LaunchConfiguration. Contains all the necessary configuration for ASG to launch instances.</p>
+<ul class="simple">
+<li><strong>CloudWatch (Alarms, Logs etc)</strong></li>
+</ul>
+<p>WebServerLogGroup - Logs::LogGroup. The group for log streams.</p>
+<p>WebServerScaleUpPolicy - AutoScaling::ScalingPolicy.</p>
+<p>WebServerScaleDownPolicy - AutoScaling::ScalingPolicy.</p>
+<p>NetworkInAlarmHigh - CloudWatch::Alarm. Alarm for network high utilization.</p>
+<p>NetworkInAlarmLow - CloudWatch::Alarm. Alarm for network Low utilization.</p>
+<p>ELBUnhealthyHostsAlarmHigh - CloudWatch::Alarm. Alarm for unhealthy hosts.</p>
+<p>MiniClipServiceMetricFilter - Filter for service binary log - NOT USED.</p>
+<p>MiniclipServiceAlarm - Alarm, should trigger when service is down - NOT USED.</p>
 </div>
 <div class="section" id="final-notes-and-critics">
 <h2>Final Notes and Critics<a class="headerlink" href="#final-notes-and-critics" title="Permalink to this headline">¶</a></h2>
@@ -303,6 +327,17 @@ but to trigger an instance recovery would need to setup Admin keys on the instan
 do this for security reasons, although it&#8217;s a common approach).</p>
 <p>b) Using an extra Alarm from miniclip_monitor logs. (problem to associate the alarm with the instanceID and not the
 ASG.</p>
+</div>
+<div class="section" id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this headline">¶</a></h2>
+<p>Hope you enjoyed the solution, i&#8217;m really excited for the opportunity to
+join the miniclip team.</p>
+<p>You can checkout the following for some extra info about me:</p>
+<ul class="simple">
+<li><a class="reference download internal" href="_downloads/CV.pdf"><code class="xref download docutils literal"><span class="pre">C.V.</span></code></a></li>
+<li><a class="reference external" href="https://github.com/dpgaspar/Flask-AppBuilder">Flask AppBuilder: My OSS project, feel free to use it!</a></li>
+<li><a class="reference external" href="https://pt.linkedin.com/pub/daniel-gaspar/a/312/718">Linkedin</a></li>
+</ul>
 </div>
 </div>
 <div class="section" id="indices-and-tables">
